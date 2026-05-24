@@ -12,7 +12,7 @@ export const getEmployees = async (req, res) => {
 
     const employees = await Employee.find({
       ...where,
-      createdBy: req.user.userId,
+      createdBy: req.session.userId,
     })
       .sort({ createdAt: -1 })
       .populate("userId", "email role")
@@ -65,7 +65,7 @@ export const createEmployee = async (req, res) => {
 
     const employee = await Employee.create({
       userId: user._id,
-      createdBy: req.user.userId,
+      createdBy: req.session.userId,
       firstName,
       lastName,
       email,
