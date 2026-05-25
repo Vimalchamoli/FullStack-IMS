@@ -26,89 +26,101 @@ const LoginForm = ({ role, title, subtitle }) => {
     try {
       if (isRegistering) {
         // STEP 1 → send otp
-        if (!otpSent) {
-          const response = await api.post("/auth/send-otp", {
-            email,
-          });
+        //   if (!otpSent) {
+        //     const response = await api.post("/auth/send-otp", {
+        //       email,
+        //     });
 
-          toast.success(response.data.message);
+        //     toast.success(response.data.message);
 
-          setOtpSent(true);
-        }
+        //     setOtpSent(true);
+        //   }
 
-        // STEP 2 → verify otp
-        else {
-          const response = await api.post("/auth/verify-otp", {
-            email,
-            otp,
-            password,
-          });
+        //   // STEP 2 → verify otp
+        //   else {
+        //     const response = await api.post("/auth/verify-otp", {
+        //       email,
+        //       otp,
+        //       password,
+        //     });
 
-          toast.success(response.data.message);
+        //     toast.success(response.data.message);
 
-          setOtp("");
-          setPassword("");
-          setEmail("");
+        //     setOtp("");
+        //     setPassword("");
+        //     setEmail("");
 
-          setOtpSent(false);
-          setIsRegistering(false);
-        }
-      } else if (isForgotPassword) {
-        // STEP 1 → send reset otp
-        if (!otpSent) {
-          const response = await api.post("/auth/forgot-password", {
-            email,
-          });
+        //     setOtpSent(false);
+        //     setIsRegistering(false);
+        //   }
+        // } else if (isForgotPassword) {
+        //   // STEP 1 → send reset otp
+        //   if (!otpSent) {
+        //     const response = await api.post("/auth/forgot-password", {
+        //       email,
+        //     });
 
-          toast.success(response.data.message);
+        //     toast.success(response.data.message);
 
-          setOtpSent(true);
-        }
+        //     setOtpSent(true);
+        //   }
 
-        // STEP 2 → reset password
-        else {
-          const response = await api.post("/auth/reset-password", {
-            email,
-            otp,
-            newPassword,
-          });
+        //   // STEP 2 → reset password
+        //   else {
+        //     const response = await api.post("/auth/reset-password", {
+        //       email,
+        //       otp,
+        //       newPassword,
+        //     });
 
-          toast.success(response.data.message);
+        //     toast.success(response.data.message);
 
-          setOtp("");
-          setNewPassword("");
+        //     setOtp("");
+        //     setNewPassword("");
 
-          setOtpSent(false);
+        //     setOtpSent(false);
 
-          setIsForgotPassword(false);
-        }
-      } else {
-        // STEP 1 → send login otp
-        if (!otpSent) {
-          const response = await api.post("/auth/login", {
-            email,
-            password,
-            role_type: role,
-          });
+        //     setIsForgotPassword(false);
+        //   }
+        // } else {
+        //   // STEP 1 → send login otp
+        //   if (!otpSent) {
+        //     const response = await api.post("/auth/login", {
+        //       email,
+        //       password,
+        //       role_type: role,
+        //     });
 
-          toast.success(response.data.message);
+        //     toast.success(response.data.message);
 
-          setOtpSent(true);
-        }
+        //     setOtpSent(true);
+        //   }
 
-        // STEP 2 → verify login otp
-        else {
-          const response = await api.post("/auth/verify-login-otp", {
-            email,
-            otp,
-          });
+        //   // STEP 2 → verify login otp
+        //   else {
+        //     const response = await api.post("/auth/verify-login-otp", {
+        //       email,
+        //       otp,
+        //     });
 
-          localStorage.setItem("token", response.data.token);
+        //     localStorage.setItem("token", response.data.token);
 
-          toast.success("Login successful");
+        //     toast.success("Login successful");
 
-          window.location.href = "/dashboard";
-        }
+        //     window.location.href = "/dashboard";
+        //   }
+
+        const response = await api.post("/auth/login", {
+          email,
+          password,
+          role_type: role,
+        });
+
+        localStorage.setItem("token", response.data.token);
+
+        toast.success("Login successful");
+
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       toast.error(
