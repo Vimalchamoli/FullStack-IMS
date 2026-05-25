@@ -42,7 +42,6 @@ export const sendOtp = async (req, res) => {
     await sendOtpEmail(
       email,
       otp,
-      username,
       "Heyy Dear.. Welcome.. Here is your register OTP",
     );
 
@@ -185,7 +184,6 @@ export const login = async (req, res) => {
     await sendOtpEmail(
       user.email,
       loginOtp,
-      username,
       "Hey.. Dear! Thank you for visiting again.. Here is your Login OTP",
     );
 
