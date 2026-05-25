@@ -43,7 +43,7 @@ export const sendOtp = async (req, res) => {
       email,
       otp,
       username,
-      "Heyy ${variableName} Welcome.. Here is your register OTP",
+      "Heyy Dear.. Welcome.. Here is your register OTP",
     );
 
     res.json({
@@ -186,7 +186,7 @@ export const login = async (req, res) => {
       user.email,
       loginOtp,
       username,
-      "Hey.. ${variableName} . Thank you for visiting again.. Here is your Login OTP",
+      "Hey.. Dear! Thank you for visiting again.. Here is your Login OTP",
     );
 
     return res.json({
