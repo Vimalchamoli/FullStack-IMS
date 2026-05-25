@@ -148,6 +148,81 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    // const payload = {
+    //   userId: user._id.toString(),
+    //   role: user.role,
+    //   email: user.email,
+    // };
+
+    // const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    //   expiresIn: "7d",
+    // });
+
+    // return res.json({ user: payload, token });
+
+    // generate login otp
+    const loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // save otp
+    user.loginOtp = loginOtp;
+
+    user.loginOtpExpiry = Date.now() + 5 * 60 * 1000;
+
+    await user.save();
+
+    // send otp email
+    await sendOtpEmail(user.email, loginOtp);
+
+    return res.json({
+      success: true,
+      requiresOtp: true,
+      message: "OTP sent to your email",
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({ error: "Login failed" });
+  }
+};
+// verify the otp during login session
+export const verifyLoginOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        error: "Email and OTP are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    // check otp
+    if (user.loginOtp !== otp) {
+      return res.status(400).json({
+        error: "Invalid OTP",
+      });
+    }
+
+    // check expiry
+    if (user.loginOtpExpiry < Date.now()) {
+      return res.status(400).json({
+        error: "OTP expired",
+      });
+    }
+
+    // clear otp
+    user.loginOtp = null;
+    user.loginOtpExpiry = null;
+
+    await user.save();
+
+    // generate jwt
     const payload = {
       userId: user._id.toString(),
       role: user.role,
@@ -158,13 +233,19 @@ export const login = async (req, res) => {
       expiresIn: "7d",
     });
 
-    return res.json({ user: payload, token });
+    return res.json({
+      success: true,
+      user: payload,
+      token,
+    });
   } catch (error) {
-    console.error("Login error:", error);
-    return res.status(500).json({ error: "Login failed" });
+    console.log(error);
+
+    return res.status(500).json({
+      error: "OTP verification failed",
+    });
   }
 };
-
 // Get session for employee and admin
 // GET /api/auth/session
 export const session = (req, res) => {

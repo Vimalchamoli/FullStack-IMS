@@ -52,8 +52,33 @@ const LoginForm = ({ role, title, subtitle }) => {
           setIsRegistering(false);
         }
       } else {
-        await login(email, password, role);
-        navigate("/dashboard");
+        // STEP 1 → send login otp
+        if (!otpSent) {
+          const response = await api.post("/auth/login", {
+            email,
+            password,
+            role_type: role,
+          });
+
+          toast.success(response.data.message);
+
+          setOtpSent(true);
+        }
+
+        // STEP 2 → verify login otp
+        else {
+          const response = await api.post("/auth/verify-login-otp", {
+            email,
+            otp,
+          });
+
+          localStorage.setItem("token", response.data.token);
+
+          toast.success("Login successful");
+
+          window.location.href = "/dashboard";
+          // navigate("/dashboard");
+        }
       }
     } catch (error) {
       toast.error(
