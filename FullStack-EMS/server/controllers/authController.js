@@ -39,7 +39,12 @@ export const sendOtp = async (req, res) => {
       await user.save();
     }
 
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(
+      email,
+      otp,
+      username,
+      "Heyy ${variableName} Welcome.. Here is your register OTP",
+    );
 
     res.json({
       success: true,
@@ -70,7 +75,7 @@ export const verifyOtp = async (req, res) => {
 
     if (user && user.isVerified) {
       return res.status(400).json({
-        error: "Account already exists. Please login.",
+        error: "Account already exists. Please login with new Gmail.",
       });
     }
 
@@ -136,11 +141,17 @@ export const login = async (req, res) => {
     }
 
     if (role_type === "admin" && user.role !== "ADMIN") {
-      return res.status(401).json({ error: "Not authorized as admin" });
+      return res.status(401).json({
+        error:
+          "No admin account found in this Email.. please try another gamil.. Thank You",
+      });
     }
 
     if (role_type === "employee" && user.role !== "EMPLOYEE") {
-      return res.status(401).json({ error: "Not authorized as employee" });
+      return res.status(401).json({
+        error:
+          "No employee account found in this Email. please try another gamil.. Thank You",
+      });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
@@ -171,7 +182,12 @@ export const login = async (req, res) => {
     await user.save();
 
     // send otp email
-    await sendOtpEmail(user.email, loginOtp);
+    await sendOtpEmail(
+      user.email,
+      loginOtp,
+      username,
+      "Hey.. ${variableName} . Thank you for visiting again.. Here is your Login OTP",
+    );
 
     return res.json({
       success: true,
@@ -243,6 +259,115 @@ export const verifyLoginOtp = async (req, res) => {
 
     return res.status(500).json({
       error: "OTP verification failed",
+    });
+  }
+};
+
+// email generate reset otp → save in DB → send email
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email is required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    // generate otp
+    const resetOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // save otp
+    user.resetOtp = resetOtp;
+
+    user.resetOtpExpiry = Date.now() + 5 * 60 * 1000;
+
+    await user.save();
+
+    // send email
+    await sendOtpEmail(
+      user.email,
+      resetOtp,
+      "Someone is trying to reset your Employee Management System's Password. If its not you, just change your password immideately",
+    );
+
+    return res.json({
+      success: true,
+      message: "Password reset OTP sent",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      error: "Failed to send reset OTP",
+    });
+  }
+};
+
+// email + otp + newPassword → verify otp → hash password → save new password
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        error: "All fields are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    // verify otp
+    if (user.resetOtp !== otp) {
+      return res.status(400).json({
+        error: "Invalid OTP",
+      });
+    }
+
+    // check expiry
+    if (user.resetOtpExpiry < Date.now()) {
+      return res.status(400).json({
+        error: "OTP expired",
+      });
+    }
+
+    // hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // update password
+    user.password = hashedPassword;
+
+    // clear otp
+    user.resetOtp = null;
+    user.resetOtpExpiry = null;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      error: "Failed to reset password",
     });
   }
 };

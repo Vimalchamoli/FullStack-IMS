@@ -19,12 +19,13 @@ const userSchema = new mongoose.Schema(
     },
 
     otp: String,
-
     otpExpiry: Date,
 
     loginOtp: String,
-
     loginOtpExpiry: Date,
+
+    resetOtp: String,
+    resetOtpExpiry: Date,
 
     isVerified: {
       type: Boolean,

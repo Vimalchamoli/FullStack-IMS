@@ -14,6 +14,8 @@ const LoginForm = ({ role, title, subtitle }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -51,6 +53,35 @@ const LoginForm = ({ role, title, subtitle }) => {
           setOtpSent(false);
           setIsRegistering(false);
         }
+      } else if (isForgotPassword) {
+        // STEP 1 → send reset otp
+        if (!otpSent) {
+          const response = await api.post("/auth/forgot-password", {
+            email,
+          });
+
+          toast.success(response.data.message);
+
+          setOtpSent(true);
+        }
+
+        // STEP 2 → reset password
+        else {
+          const response = await api.post("/auth/reset-password", {
+            email,
+            otp,
+            newPassword,
+          });
+
+          toast.success(response.data.message);
+
+          setOtp("");
+          setNewPassword("");
+
+          setOtpSent(false);
+
+          setIsForgotPassword(false);
+        }
       } else {
         // STEP 1 → send login otp
         if (!otpSent) {
@@ -77,7 +108,6 @@ const LoginForm = ({ role, title, subtitle }) => {
           toast.success("Login successful");
 
           window.location.href = "/dashboard";
-          // navigate("/dashboard");
         }
       }
     } catch (error) {
@@ -174,6 +204,21 @@ const LoginForm = ({ role, title, subtitle }) => {
               </button>
             </div>
           </div>
+          {!isRegistering && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(true);
+                  setOtpSent(false);
+                  setOtp("");
+                }}
+                className="text-sm text-indigo-600 hover:underline cursor-pointer"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
 
           {otpSent && (
             <div className="group">
@@ -191,13 +236,39 @@ const LoginForm = ({ role, title, subtitle }) => {
             </div>
           )}
 
+          {isForgotPassword && otpSent && (
+            <div className="group">
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                New Password
+              </label>
+
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                placeholder="Enter new password"
+              />
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
             className="w-full mt-2 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-md text-sm font-semibold hover:from-indigo-700 hover:to-indigo-600 disabled:opacity-50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] flex items-center justify-center cursor-pointer"
           >
             {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
-            {isRegistering ? (otpSent ? "Verify OTP" : "Send OTP") : "Sign in"}
+            {isRegistering
+              ? otpSent
+                ? "Verify OTP"
+                : "Send OTP"
+              : isForgotPassword
+                ? otpSent
+                  ? "Reset Password"
+                  : "Send Reset OTP"
+                : otpSent
+                  ? "Verify Login OTP"
+                  : "Sign in"}
           </button>
         </form>
 
