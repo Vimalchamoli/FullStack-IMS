@@ -19,97 +19,185 @@ const LoginForm = ({ role, title, subtitle }) => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setLoading(true);
+  //   try {
+  //     if (isRegistering) {
+  //       // STEP 1 → send otp
+  //       //   if (!otpSent) {
+  //       //     const response = await api.post("/auth/send-otp", {
+  //       //       email,
+  //       //     });
+
+  //       //     toast.success(response.data.message);
+
+  //       //     setOtpSent(true);
+  //       //   }
+
+  //       //   // STEP 2 → verify otp
+  //       //   else {
+  //       //     const response = await api.post("/auth/verify-otp", {
+  //       //       email,
+  //       //       otp,
+  //       //       password,
+  //       //     });
+
+  //       //     toast.success(response.data.message);
+
+  //       //     setOtp("");
+  //       //     setPassword("");
+  //       //     setEmail("");
+
+  //       //     setOtpSent(false);
+  //       //     setIsRegistering(false);
+  //       //   }
+  //       // } else if (isForgotPassword) {
+  //       //   // STEP 1 → send reset otp
+  //       //   if (!otpSent) {
+  //       //     const response = await api.post("/auth/forgot-password", {
+  //       //       email,
+  //       //     });
+
+  //       //     toast.success(response.data.message);
+
+  //       //     setOtpSent(true);
+  //       //   }
+
+  //       //   // STEP 2 → reset password
+  //       //   else {
+  //       //     const response = await api.post("/auth/reset-password", {
+  //       //       email,
+  //       //       otp,
+  //       //       newPassword,
+  //       //     });
+
+  //       //     toast.success(response.data.message);
+
+  //       //     setOtp("");
+  //       //     setNewPassword("");
+
+  //       //     setOtpSent(false);
+
+  //       //     setIsForgotPassword(false);
+  //       //   }
+  //       // } else {
+  //       //   // STEP 1 → send login otp
+  //       //   if (!otpSent) {
+  //       //     const response = await api.post("/auth/login", {
+  //       //       email,
+  //       //       password,
+  //       //       role_type: role,
+  //       //     });
+
+  //       //     toast.success(response.data.message);
+
+  //       //     setOtpSent(true);
+  //       //   }
+
+  //       //   // STEP 2 → verify login otp
+  //       //   else {
+  //       //     const response = await api.post("/auth/verify-login-otp", {
+  //       //       email,
+  //       //       otp,
+  //       //     });
+
+  //       //     localStorage.setItem("token", response.data.token);
+
+  //       //     toast.success("Login successful");
+
+  //       //     window.location.href = "/dashboard";
+  //       //   }
+
+  //       const response = await api.post("/auth/login", {
+  //         email,
+  //         password,
+  //         role_type: role,
+  //       });
+
+  //       localStorage.setItem("token", response.data.token);
+
+  //       toast.success("Login successful");
+
+  //       window.location.href = "/dashboard";
+  //     }
+  //   } catch (error) {
+  //     toast.error(
+  //       error.response?.data?.error ||
+  //         error.message ||
+  //         (isRegistering ? "Registration failed" : "Login failed"),
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
     setLoading(true);
+
     try {
+      // REGISTER
       if (isRegistering) {
-        // STEP 1 → send otp
-        //   if (!otpSent) {
-        //     const response = await api.post("/auth/send-otp", {
-        //       email,
-        //     });
+        if (!otpSent) {
+          const response = await api.post("/auth/send-otp", {
+            email,
+          });
 
-        //     toast.success(response.data.message);
+          toast.success(response.data.message);
 
-        //     setOtpSent(true);
-        //   }
+          setOtpSent(true);
+        } else {
+          const response = await api.post("/auth/verify-otp", {
+            email,
+            otp,
+            password,
+          });
 
-        //   // STEP 2 → verify otp
-        //   else {
-        //     const response = await api.post("/auth/verify-otp", {
-        //       email,
-        //       otp,
-        //       password,
-        //     });
+          toast.success(response.data.message);
 
-        //     toast.success(response.data.message);
+          setOtp("");
+          setPassword("");
+          setEmail("");
 
-        //     setOtp("");
-        //     setPassword("");
-        //     setEmail("");
+          setOtpSent(false);
 
-        //     setOtpSent(false);
-        //     setIsRegistering(false);
-        //   }
-        // } else if (isForgotPassword) {
-        //   // STEP 1 → send reset otp
-        //   if (!otpSent) {
-        //     const response = await api.post("/auth/forgot-password", {
-        //       email,
-        //     });
+          setIsRegistering(false);
+        }
+      }
 
-        //     toast.success(response.data.message);
+      // FORGOT PASSWORD
+      else if (isForgotPassword) {
+        if (!otpSent) {
+          const response = await api.post("/auth/forgot-password", {
+            email,
+          });
 
-        //     setOtpSent(true);
-        //   }
+          toast.success(response.data.message);
 
-        //   // STEP 2 → reset password
-        //   else {
-        //     const response = await api.post("/auth/reset-password", {
-        //       email,
-        //       otp,
-        //       newPassword,
-        //     });
+          setOtpSent(true);
+        } else {
+          const response = await api.post("/auth/reset-password", {
+            email,
+            otp,
+            newPassword,
+          });
 
-        //     toast.success(response.data.message);
+          toast.success(response.data.message);
 
-        //     setOtp("");
-        //     setNewPassword("");
+          setOtp("");
+          setNewPassword("");
 
-        //     setOtpSent(false);
+          setOtpSent(false);
 
-        //     setIsForgotPassword(false);
-        //   }
-        // } else {
-        //   // STEP 1 → send login otp
-        //   if (!otpSent) {
-        //     const response = await api.post("/auth/login", {
-        //       email,
-        //       password,
-        //       role_type: role,
-        //     });
+          setIsForgotPassword(false);
+        }
+      }
 
-        //     toast.success(response.data.message);
-
-        //     setOtpSent(true);
-        //   }
-
-        //   // STEP 2 → verify login otp
-        //   else {
-        //     const response = await api.post("/auth/verify-login-otp", {
-        //       email,
-        //       otp,
-        //     });
-
-        //     localStorage.setItem("token", response.data.token);
-
-        //     toast.success("Login successful");
-
-        //     window.location.href = "/dashboard";
-        //   }
-
+      // DIRECT LOGIN
+      else {
         const response = await api.post("/auth/login", {
           email,
           password,
@@ -132,7 +220,6 @@ const LoginForm = ({ role, title, subtitle }) => {
       setLoading(false);
     }
   };
-
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-cover bg-center relative bg-slate-900"
