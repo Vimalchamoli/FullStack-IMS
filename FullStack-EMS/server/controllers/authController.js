@@ -171,26 +171,42 @@ export const login = async (req, res) => {
     // return res.json({ user: payload, token });
 
     // generate login otp
-    const loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    // const loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // save otp
-    user.loginOtp = loginOtp;
+    // // save otp
+    // user.loginOtp = loginOtp;
 
-    user.loginOtpExpiry = Date.now() + 5 * 60 * 1000;
+    // user.loginOtpExpiry = Date.now() + 5 * 60 * 1000;
 
-    await user.save();
+    // await user.save();
 
-    // send otp email
-    await sendOtpEmail(
-      user.email,
-      loginOtp,
-      "Hey.. Dear! Thank you for visiting again.. Here is your Login OTP",
-    );
+    // // send otp email
+    // await sendOtpEmail(
+    //   user.email,
+    //   loginOtp,
+    //   "Hey.. Dear! Thank you for visiting again.. Here is your Login OTP",
+    // );
+
+    // return res.json({
+    //   success: true,
+    //   requiresOtp: true,
+    //   message: "OTP sent to your email",
+    // });
+
+    const payload = {
+      userId: user._id.toString(),
+      role: user.role,
+      email: user.email,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     return res.json({
       success: true,
-      requiresOtp: true,
-      message: "OTP sent to your email",
+      user: payload,
+      token,
     });
   } catch (error) {
     console.error("Login error:", error);
