@@ -439,6 +439,7 @@ export const registerAdmin = async (req, res) => {
       email,
       password: hashedPassword,
       role: "ADMIN",
+      isVerified: true,
     });
 
     await newUser.save();

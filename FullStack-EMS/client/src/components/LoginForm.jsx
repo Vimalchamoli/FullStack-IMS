@@ -140,32 +140,46 @@ const LoginForm = ({ role, title, subtitle }) => {
 
     try {
       // REGISTER
+      // if (isRegistering) {
+      //   if (!otpSent) {
+      //     const response = await api.post("/auth/send-otp", {
+      //       email,
+      //     });
+
+      //     toast.success(response.data.message);
+
+      //     setOtpSent(true);
+      //   } else {
+      //     const response = await api.post("/auth/verify-otp", {
+      //       email,
+      //       otp,
+      //       password,
+      //     });
+
+      //     toast.success(response.data.message);
+
+      //     setOtp("");
+      //     setPassword("");
+      //     setEmail("");
+
+      //     setOtpSent(false);
+
+      //     setIsRegistering(false);
+      //   }
+      // }
       if (isRegistering) {
-        if (!otpSent) {
-          const response = await api.post("/auth/send-otp", {
-            email,
-          });
+        const response = await api.post("/auth/register-admin", {
+          email,
+          password,
+        });
 
-          toast.success(response.data.message);
+        toast.success("Admin account created successfully");
 
-          setOtpSent(true);
-        } else {
-          const response = await api.post("/auth/verify-otp", {
-            email,
-            otp,
-            password,
-          });
+        setIsRegistering(false);
 
-          toast.success(response.data.message);
+        setEmail("");
 
-          setOtp("");
-          setPassword("");
-          setEmail("");
-
-          setOtpSent(false);
-
-          setIsRegistering(false);
-        }
+        setPassword("");
       }
 
       // FORGOT PASSWORD
