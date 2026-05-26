@@ -333,7 +333,7 @@ const LoginForm = ({ role, title, subtitle }) => {
             </div>
           )}
 
-          {otpSent && (
+          {/* {otpSent && (
             <div className="group">
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">
                 Enter OTP
@@ -347,7 +347,7 @@ const LoginForm = ({ role, title, subtitle }) => {
                 placeholder="Enter 6 digit OTP"
               />
             </div>
-          )}
+          )} */}
 
           {isForgotPassword && otpSent && (
             <div className="group">
@@ -371,7 +371,7 @@ const LoginForm = ({ role, title, subtitle }) => {
             className="w-full mt-2 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-md text-sm font-semibold hover:from-indigo-700 hover:to-indigo-600 disabled:opacity-50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] flex items-center justify-center cursor-pointer"
           >
             {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
-            {isRegistering
+            {/* {isRegistering
               ? otpSent
                 ? "Verify OTP"
                 : "Send OTP"
@@ -381,7 +381,13 @@ const LoginForm = ({ role, title, subtitle }) => {
                   : "Send Reset OTP"
                 : otpSent
                   ? "Verify Login OTP"
-                  : "Sign in"}
+                  : "Sign in"} */}
+
+            {isRegistering
+              ? "Create Account"
+              : isForgotPassword
+                ? "Reset Password"
+                : "Sign in"}
           </button>
         </form>
 
