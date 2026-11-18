@@ -1,4 +1,16 @@
 import { Router } from "express";
+const cors = require("cors");
+
+app.use(cors({
+  origin: "https://fullstack-ims.vercel.app",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.use(express.json());
+
+// Register routes after the CORS middleware
+app.use("/api/auth", authRoutes);
 import {
   changePassword,
   login,
