@@ -16,6 +16,7 @@ export const sendOtp = async (req, res) => {
       });
     }
 
+
     // generate 6 digit otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -164,6 +165,7 @@ export const login = async (req, res) => {
     user.loginOtpExpiry = Date.now() + 5 * 60 * 1000;
     await user.save();
 
+      console.log("Attempting to send login OTP")
     await sendOtpEmail(user.email, loginOtp, "LOGIN");
 
     return res.json({
