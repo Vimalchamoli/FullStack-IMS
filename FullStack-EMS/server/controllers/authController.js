@@ -39,11 +39,7 @@ export const sendOtp = async (req, res) => {
       await user.save();
     }
 
-    await sendOtpEmail(
-      email,
-      otp,
-      "Heyy Dear.. Welcome.. Here is your register OTP",
-    );
+    await sendOtpEmail(user.email, loginOtp, "LOGIN");
 
     res.json({
       success: true,
