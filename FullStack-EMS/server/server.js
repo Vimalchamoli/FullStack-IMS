@@ -1,9 +1,16 @@
+import cors from "cors";
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import multer from "multer";
 
 import connectDB from "./config/db.js";
+
+app.use(cors({
+  origin: "https://fullstack-ims.vercel.app",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 import authRouter from "./routes/authRoutes.js";
 import employeesRouter from "./routes/employeeRoutes.js";
