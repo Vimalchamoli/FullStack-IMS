@@ -211,19 +211,27 @@ const LoginForm = ({ role, title, subtitle }) => {
       }
 
       // DIRECT LOGIN
-      else {
-        const response = await api.post("/auth/login", {
-          email,
-          password,
-          role_type: role,
-        });
+else {
+  if (!otpSent) {
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+      role_type: role,
+    });
 
-        localStorage.setItem("token", response.data.token);
+    toast.success(response.data.message || "OTP sent to your email");
+    setOtpSent(true);
+  } else {
+    const response = await api.post("/auth/verify-login-otp", {
+      email,
+      otp,
+    });
 
-        toast.success("Login successful");
-
-        window.location.href = "/dashboard";
-      }
+    localStorage.setItem("token", response.data.token);
+    toast.success("Login successful");
+    window.location.href = "/dashboard";
+  }
+}
     } catch (error) {
       toast.error(
         error.response?.data?.error ||
