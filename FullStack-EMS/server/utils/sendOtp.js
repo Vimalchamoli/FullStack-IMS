@@ -61,9 +61,13 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
+  
   host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 
   auth: {
     user: process.env.EMAIL_USER,
@@ -114,7 +118,7 @@ export const sendOtpEmail = async (email, otp, purpose = "REGISTER") => {
     });
 
     console.log("OTP email sent successfully");
-  } catch (error) {
+  } } catch (error) {
   console.error("SMTP ERROR:", error.message);
   throw error;
 }
