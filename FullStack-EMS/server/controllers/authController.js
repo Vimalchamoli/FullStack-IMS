@@ -127,10 +127,17 @@ export const login = async (req, res) => {
     const { email, password, role_type } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+      return res.status(400).json({
+        error: "Email and password are required",
+      });
     }
 
     const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ error: "Email not found" });
+    }
+
     if (!user.isVerified) {
       return res.status(401).json({
         error: "Please verify your account first",
@@ -138,74 +145,31 @@ export const login = async (req, res) => {
     }
 
     if (role_type === "admin" && user.role !== "ADMIN") {
-      return res.status(401).json({
-        error:
-          "No admin account found in this Email.. please try another gamil.. Thank You",
-      });
+      return res.status(401).json({ error: "No admin account found for this email" });
     }
 
     if (role_type === "employee" && user.role !== "EMPLOYEE") {
-      return res.status(401).json({
-        error:
-          "No employee account found in this Email. please try another gamil.. Thank You",
-      });
+      return res.status(401).json({ error: "No employee account found for this email" });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
+
     if (!isValid) {
-      return res.status(401).json({ error: "Incorrect Password" });
-    } 
-      
+      return res.status(401).json({ error: "Incorrect password" });
+    }
 
-    const payload = {
-      userId: user._id.toString(),
-      role: user.role,
-      email: user.email,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    return res.json({ user: payload, token });
-
-    generate login otp
     const loginOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // save otp
     user.loginOtp = loginOtp;
-
     user.loginOtpExpiry = Date.now() + 5 * 60 * 1000;
-
     await user.save();
 
-    // send otp email
-    await sendOtpEmail(
-      user.email,
-      loginOtp,
-      "Hey.. Dear! Thank you for visiting again.. Here is your Login OTP",
-    );
+    await sendOtpEmail(user.email, loginOtp, "LOGIN");
 
     return res.json({
       success: true,
       requiresOtp: true,
       message: "OTP sent to your email",
-    });
-
-    const payload = {
-      userId: user._id.toString(),
-      role: user.role,
-      email: user.email,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    return res.json({
-      success: true,
-      user: payload,
-      token,
     });
   } catch (error) {
     console.error("Login error:", error);
