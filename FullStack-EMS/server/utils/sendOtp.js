@@ -118,7 +118,7 @@ export const sendOtpEmail = async (email, otp, purpose = "REGISTER") => {
     });
 
     console.log("OTP email sent successfully");
-  } } catch (error) {
+  } catch (error) {
   console.error("SMTP ERROR:", error.message);
   throw error;
 }
