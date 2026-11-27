@@ -68,18 +68,20 @@ export const verifyOtp = async (req, res) => {
     // find user
     const user = await User.findOne({ email });
 
+     if (!user) {
+      return res.status(400).json({
+        error: "User not found",
+      });
+    }
+    
+
     if (user && user.isVerified) {
       return res.status(400).json({
         error: "Account already exists. Please login with new Gmail.",
       });
     }
 
-    if (!user) {
-      return res.status(400).json({
-        error: "User not found",
-      });
-    }
-
+    
     // check otp
     if (user.otp !== otp) {
       return res.status(400).json({
