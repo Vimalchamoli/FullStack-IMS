@@ -20,7 +20,7 @@ export const sendOtp = async (req, res) => {
     // generate 6 digit otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log("Generated OTP:", otp);
+ 
 
     // send email
     const otpExpiry = Date.now() + 5 * 60 * 1000;
@@ -40,7 +40,7 @@ export const sendOtp = async (req, res) => {
       await user.save();
     }
 
-    await sendOtpEmail(user.email, loginOtp, "LOGIN");
+  await sendOtpEmail(user.email, otp, "REGISTER");
 
     res.json({
       success: true,
