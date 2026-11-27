@@ -92,7 +92,7 @@ export const sendOtpEmail = async (email, otp, purpose = "REGISTER") => {
           : "Please verify your EMS account registration.";
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+     from: process.env.EMAIL_FROM,
       to: email,
       subject,
 
@@ -115,10 +115,7 @@ export const sendOtpEmail = async (email, otp, purpose = "REGISTER") => {
 
     console.log("OTP email sent successfully");
   } catch (error) {
-    console.log("SMTP ERROR:", error.message);
-
-    // IMPORTANT:
-    // Don't crash server if email fails
-    return;
-  }
+  console.error("SMTP ERROR:", error.message);
+  throw error;
+}
 };
