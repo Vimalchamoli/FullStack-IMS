@@ -139,48 +139,41 @@ const LoginForm = ({ role, title, subtitle }) => {
     setLoading(true);
 
     try {
-      // REGISTER
-      // if (isRegistering) {
-      //   if (!otpSent) {
-      //     const response = await api.post("/auth/send-otp", {
-      //       email,
-      //     });
-
-      //     toast.success(response.data.message);
-
-      //     setOtpSent(true);
-      //   } else {
-      //     const response = await api.post("/auth/verify-otp", {
-      //       email,
-      //       otp,
-      //       password,
-      //     });
-
-      //     toast.success(response.data.message);
-
-      //     setOtp("");
-      //     setPassword("");
-      //     setEmail("");
-
-      //     setOtpSent(false);
-
-      //     setIsRegistering(false);
-      //   }
-      // }
       if (isRegistering) {
-        const response = await api.post("/auth/register-admin", {
-          email,
-          password,
-        });
+  if (!otpSent) {
+    const response = await api.post("/auth/send-otp", { email });
+    toast.success(response.data.message || "OTP sent to your email");
+    setOtpSent(true);
+  } else {
+    const response = await api.post("/auth/verify-otp", {
+      email,
+      otp,
+      password,
+    });
 
-        toast.success("Admin account created successfully");
+    toast.success(response.data.message || "Account created");
+    setOtp("");
+    setPassword("");
+    setEmail("");
+    setOtpSent(false);
+    setIsRegistering(false);
+  }
+}
+      // }
+      // if (isRegistering) {
+      //   const response = await api.post("/auth/register-admin", {
+      //     email,
+      //     password,
+      //   });
 
-        setIsRegistering(false);
+      //   toast.success("Admin account created successfully");
 
-        setEmail("");
+      //   setIsRegistering(false);
 
-        setPassword("");
-      }
+      //   setEmail("");
+
+      //   setPassword("");
+      // }
 
       // FORGOT PASSWORD
       else if (isForgotPassword) {
@@ -379,14 +372,14 @@ else {
 >
   {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
   {isRegistering
-    ? "Create Account"
-    : isForgotPassword
-      ? otpSent
-        ? "Reset Password"
-        : "Send Reset OTP"
-      : otpSent
-        ? "Verify Login OTP"
-        : "Sign in"}
+  ? "Create Account"
+  : isForgotPassword
+    ? otpSent
+      ? "Reset Password"
+      : "Send Reset OTP"
+    : otpSent
+      ? "Verify Login OTP"
+      : "Sign in"}
 </button>
         </form>
 
