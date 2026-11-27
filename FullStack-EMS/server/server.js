@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use(
   cors({
-    origin: ["https://full-stack-ims.vercel.app"],
+    origin: ["https://fullstack-ims.vercel.app"],
     credentials: true,
   }),
 );
