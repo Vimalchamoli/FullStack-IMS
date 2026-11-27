@@ -341,21 +341,20 @@ else {
             </div>
           )}
 
-          {/* {otpSent && (
-            <div className="group">
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                Enter OTP
-              </label>
-
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                placeholder="Enter 6 digit OTP"
-              />
-            </div>
-          )} */}
+         {otpSent && (
+  <div className="group">
+    <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+      Enter OTP
+    </label>
+    <input
+      type="text"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+      required
+      placeholder="Enter 6 digit OTP"
+    />
+  </div>
+)}
 
           {isForgotPassword && otpSent && (
             <div className="group">
